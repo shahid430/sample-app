@@ -1,0 +1,109 @@
+  840  yum update && yum install pacemaker corosync pcs
+  841  yum update && yum install iptables-services
+  842  systemctl stop firewalld.service
+  843  systemctl disable firewalld.service
+  844  systemctl enable iptables.service
+  845  systemctl start iptables.service
+  846  systemctl status iptables.service
+  847  ping -c 4 centos2
+  848  ping -c 4 gateway
+  849  netstat -rn
+  850  ping -c 4 172.17.252.161
+  851  ssh centos2
+  852  systemctl status pacemaker
+  853  systemctl status corosync
+  854  cp /etc/corosync/corosync.conf.example /etc/corosync/corosync.conf
+  855  systemctl start pacemaker
+  856  systemctl enable corosync
+  857  systemctl enable pacemaker
+  858  systemctl status pacemaker
+  859  systemctl status corosync
+  860  systemctl enable pacemaker
+  861  systemctl enable corosync
+  862  history
+  863  systemctl start pcsd
+  864  systemctl enable pcsd
+  865  passwd hacluster
+  866  systemctl status corosync
+  867  history
+  868  yum –y install net-tools && netstat -npltu | grep -i corosync
+  869  yum –y install net-tools && netstat -npltu
+  870  netstat -nptlu | grep corosync
+  871  history
+  872  uname -r
+  873  iptables -I INPUT -m state --state NEW -p udp -m multiport --dports 5404,5405 -j ACCEPT
+  874  iptables -I INPUT -p tcp -m state --state NEW --dport 2224 -j ACCEPT
+  875  iptables -I INPUT -p igmp -j ACCEPT
+  876  iptables -I INPUT -m addrtype --dst-type MULTICAST -j ACCEPT
+  877  iptables -P INPUT DROP
+  878  history
+  879  ping -c 4 centos1
+  880  iptables -L -v --line-numbers
+  881  cp /etc/sysconfig/iptables-config /etc/sysconfig/iptables-config.orig
+  882  vi /etc/sysconfig/iptables-config
+  883  sestatus
+  884  getenforce
+  885  setenforce 0
+  886  getenforce
+  887  tailf  /var/log/audit/audit.log
+  888  pcs
+  889  pcs cluster
+  890  pcs cluster auth centos1 centos2
+  891  pcs cluster setup --name MyCluster centos1 centos2
+  892  pcs cluster setup --name MyCluster centos1 centos2 --force
+  893  diff /etc/corosync/corosync.conf <(ssh centos2 'cat /etc/corosync/corosync.conf')
+  894  pcs cluster start --all
+  895  pcs status cluster
+  896  pcs status
+  897  pcs status cluster
+  898  pcs status | grep -i dc
+  899  pcs status nodes
+  900  corosync-cmapctl | grep -Ei 'cluster'_name|members'
+  901  corosync-cmapctl | grep -Ei 'cluster_name|members'
+  902  pcs resource create virtual_ip ocf:heartbeat:IPaddr2 ip=172.17.252.172 cidr_netmask=24 nic=eth0 op monitor interval=30s
+  903  ip a s
+  904  pcs status cluster
+  905  pcs status resources
+  906  crm_verify -L -V
+  907  pcs property set stonith-enabled=false
+  908  pcs status resources
+  909  ping -c 4 172.17.252.172
+  910  touch hello
+  911  ll
+  912  rm hello
+  913  pcs status
+  914  pcs status cluster
+  915  systemctl status corosync
+  916  systemctl status pacemaker
+  917  pcs status
+  918  pcs status cluster
+  919  pcs cluster stop centos1
+  920  pcs cluster start centos1
+  921  pcs status cluster
+  922  pcs status
+  923  pcs resource enable virtual_ip
+  924  ping -c 4 172.17.252.172
+  925  pcs config
+  926  pcs property set stonith-enabled=true
+  927  pcs config
+  928  pcs property list
+  929  yum update && yum install fence-agents-all fence-virt
+  930  pcs stonith list
+  931  pcs stonith describe fence_ilo
+  932  pcs stonith create Stonith_1 fence_ilo pcmk_host_list="""centos1" action=reboot --force
+  933  pcs stonith create Stonith_1 fence_ilo pcmk_host_list="""centos1" pcmk_reboot_action=reboot --force
+  934  pcs stonith delete Stonith_1
+  935  pcs stonith create Stonith_1 fence_ilo pcmk_host_list="""centos1" pcmk_reboot_action=reboot --force
+  936  pcs cluster stop node01
+  937  pcs cluster stop centos1
+  938  pcs stonith fence node01 --off
+  939  pcs stonith fence centos1 --off
+  940  pcs stonith create Stonith_1 fence_ilo pcmk_host_list="""centos1" action=reboot --force
+  941  pcs stonith delete Stonith_1
+  942  pcs cluster start centos1
+  943  pcs stonith delete Stonith_1
+  944  pcs stonith create Stonith_1 fence_ilo pcmk_host_list="""centos1" action=reboot --force
+  945  pcs cluster stop centos1
+  946  pcs stonith fence centos1 --off
+  947  pcs stonith confirm node01
+  948  pcs cluster start centos1
